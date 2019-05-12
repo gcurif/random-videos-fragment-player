@@ -5,6 +5,9 @@
  */
 package cl.orange.randomplaer.mavenproject1.player;
 
+import java.io.File;
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author gustavo
@@ -29,7 +32,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         PlayerPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        importButton = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         addImagesCheckbox = new javax.swing.JCheckBox();
         AddVideosCheckbox = new javax.swing.JCheckBox();
@@ -59,10 +62,15 @@ public class MainFrame extends javax.swing.JFrame {
             .addGap(0, 324, Short.MAX_VALUE)
         );
 
-        jButton1.setText("Importar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        importButton.setText("Importar");
+        importButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                importButtonMouseClicked(evt);
+            }
+        });
+        importButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                importButtonActionPerformed(evt);
             }
         });
 
@@ -80,7 +88,7 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addComponent(importButton)
                 .addGap(18, 18, 18)
                 .addComponent(jButton2)
                 .addGap(77, 77, 77)
@@ -98,7 +106,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(PlayerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(importButton)
                     .addComponent(jButton2)
                     .addComponent(addImagesCheckbox)
                     .addComponent(AddVideosCheckbox)
@@ -109,9 +117,20 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_importButtonActionPerformed
+
+    private void importButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_importButtonMouseClicked
+        JFileChooser jfc = new JFileChooser();
+        jfc.setEnabled(true);
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jfc.showOpenDialog(jPanel1);
+        File selected = jfc.getSelectedFile();
+        if(selected !=null){
+            CONTROLLER.scanDir(selected);
+        }
+    }//GEN-LAST:event_importButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -140,9 +159,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
         //</editor-fold>
         CONTROLLER.setSeed(4545);
-        Double test = CONTROLLER.random();
-        System.out.println(test);
-        CONTROLLER.scanDir("C:\\Users\\gustavo\\Desktop\\ta");
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -155,7 +171,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox AddVideosCheckbox;
     private javax.swing.JPanel PlayerPanel;
     private javax.swing.JCheckBox addImagesCheckbox;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton importButton;
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField seedField;
