@@ -14,60 +14,64 @@ import java.util.List;
  * @author gustavo
  */
 public class PlayUtils {
-    
-    private static String EXT1;
-    private static String EXT2;
-    
+
+    private static String EXT1 = "MP4";
+    private static String EXT2 = "FLV";
+
     private int seed;
     private List<String> srcs;
-    
-    public PlayUtils(){
-        
+
+    public PlayUtils() {
+
         this.srcs = new ArrayList<String>();
         this.seed = 0;
     }
-    
-    public String next(){
-        int index = new Double(this.random() *( this.srcs.size() -1 )).intValue();
+
+    public String next() {
+        int index = new Double(this.random() * (this.srcs.size() - 1)).intValue();
         return this.srcs.get(index);
     }
-    
-    public Double random(){
-        
+
+    public Double random() {
+
         String strSeed = String.valueOf(this.seed);
-        Double actualSeed = Math.random() * (strSeed.length()-1) + 1;
+        Double actualSeed = Math.random() * (strSeed.length() - 1) + 1;
         Double finalRandom = null;
-        
-        for(int i= 0; i< actualSeed.intValue() ; i++){
+
+        for (int i = 0; i < actualSeed.intValue(); i++) {
             finalRandom = Math.random();
         }
-        
+
         return finalRandom;
     }
-    
-    public void scanDir(File dir){
-        if(dir.isDirectory()){
-            for(File file : dir.listFiles()){
+
+    public void scanDir(String path) {
+        File file = new File(path);
+        scanDir(file);
+    }
+
+    public void scanDir(File dir) {
+        if (dir.isDirectory()) {
+            for (File file : dir.listFiles()) {
                 scanDir(file);
             }
-        }else{
-            if(dir.getName().endsWith(EXT1) || dir.getName().endsWith(EXT2)){
-                this.srcs.add(dir.getPath());
+        } else {
+            if (dir != null) {
+                if (dir.getName().toUpperCase().endsWith(EXT1) || dir.getName().toUpperCase().endsWith(EXT2)) {
+                    this.srcs.add(dir.getPath());
+                        System.out.println("agregando ... " + dir.getName());
+                }
             }
         }
     }
-    
+
     public int getSeed() {
         return this.seed;
     }
 
     public void setSeed(int seed) {
         this.seed = seed;
-        
+
     }
 
-    
-    
-    
-    
 }

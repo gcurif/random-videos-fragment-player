@@ -142,6 +142,7 @@ public class MainFrame extends javax.swing.JFrame {
         CONTROLLER.setSeed(4545);
         Double test = CONTROLLER.random();
         System.out.println(test);
+        CONTROLLER.scanDir("C:\\Users\\gustavo\\Desktop\\ta");
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
