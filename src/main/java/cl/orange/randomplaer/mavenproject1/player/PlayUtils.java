@@ -17,6 +17,9 @@ public class PlayUtils {
 
     private static String EXT1 = "MP4";
     private static String EXT2 = "FLV";
+    
+    private static int MAX_DURATION = 25;
+    private static int MAX_START = 480;
 
     private int seed;
     private List<String> srcs;
@@ -27,9 +30,16 @@ public class PlayUtils {
         this.seed = 0;
     }
 
-    public String next() {
+    public Fragment next() {
         int index = new Double(this.random() * (this.srcs.size() - 1)).intValue();
-        return this.srcs.get(index);
+        File file = new File( this.srcs.get(index));
+        
+        Fragment frag =  new Fragment();
+        frag.setDuration(new Double(MAX_DURATION * random()).intValue());
+        frag.setStart(new Double(MAX_START * random()).intValue());
+        frag.setVideo(file);
+        
+        return frag;
     }
 
     public Double random() {

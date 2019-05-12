@@ -5,8 +5,20 @@
  */
 package cl.orange.randomplaer.mavenproject1.player;
 
+import java.awt.BorderLayout;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javax.swing.JFileChooser;
+import javafx.scene.Group;
+import javafx.util.Duration;
+
 
 /**
  *
@@ -31,9 +43,9 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        PlayerPanel = new javax.swing.JPanel();
+        videoPanel = new javax.swing.JPanel();
         importButton = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        nextButton = new javax.swing.JButton();
         addImagesCheckbox = new javax.swing.JCheckBox();
         AddVideosCheckbox = new javax.swing.JCheckBox();
         seedField = new javax.swing.JTextField();
@@ -50,15 +62,16 @@ public class MainFrame extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(1200, 700));
 
-        javax.swing.GroupLayout PlayerPanelLayout = new javax.swing.GroupLayout(PlayerPanel);
-        PlayerPanel.setLayout(PlayerPanelLayout);
-        PlayerPanelLayout.setHorizontalGroup(
-            PlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout videoPanelLayout = new javax.swing.GroupLayout(videoPanel);
+        videoPanel.setLayout(videoPanelLayout);
+        videoPanelLayout.setHorizontalGroup(
+            videoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-        PlayerPanelLayout.setVerticalGroup(
-            PlayerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        videoPanelLayout.setVerticalGroup(
+            videoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 324, Short.MAX_VALUE)
         );
 
@@ -74,7 +87,12 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText(">");
+        nextButton.setText(">");
+        nextButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                nextButtonMouseClicked(evt);
+            }
+        });
 
         addImagesCheckbox.setText("Agregar fotos");
 
@@ -90,7 +108,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(importButton)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(nextButton)
                 .addGap(77, 77, 77)
                 .addComponent(AddVideosCheckbox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -98,20 +116,20 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
                 .addComponent(seedField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25))
-            .addComponent(PlayerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(videoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(PlayerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(videoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(importButton)
-                    .addComponent(jButton2)
+                    .addComponent(nextButton)
                     .addComponent(addImagesCheckbox)
                     .addComponent(AddVideosCheckbox)
                     .addComponent(seedField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -130,7 +148,59 @@ public class MainFrame extends javax.swing.JFrame {
         if(selected !=null){
             CONTROLLER.scanDir(selected);
         }
+        Platform.setImplicitExit(false);
+        
+        this.videoPanel.setLayout(new BorderLayout());
+        videoPanel.add(jfxPanel,BorderLayout.CENTER);
+        
+        Fragment next =  CONTROLLER.next();
+
+        
+        Media media = new Media(next.getVideo().toURI().toString());
+        player = new MediaPlayer(media);
+        
+        MediaView mediaView = new MediaView(player);
+        Scene scene = new Scene(new Group(mediaView),1000, 600);
+        jfxPanel.setScene(scene); 
+        System.out.println("video: " + next.getVideo().getName());
+
+        player.setVolume(0.5);
+        player.play();
+                while (media.getWidth() == 0 || media.getHeight() == 0) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("getting video dimensions: " +media.getWidth() + "x" + media.getHeight());
+        }
+        this.videoPanel.setSize(media.getWidth(), media.getHeight() );
     }//GEN-LAST:event_importButtonMouseClicked
+
+    private void nextButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextButtonMouseClicked
+        Platform.setImplicitExit(false);
+        player.stop();
+        player.dispose();
+
+        
+       // this.videoPanel.setLayout(new BorderLayout());
+       Fragment next =  CONTROLLER.next();
+       
+        Media media = new Media(next.getVideo().toURI().toString());
+        player = new MediaPlayer(media);
+        MediaView mediaView = new MediaView(player);
+        Scene scene = new Scene(new Group(mediaView), this.videoPanel.getWidth(), this.videoPanel.getHeight());
+        jfxPanel.setScene(scene); 
+
+
+        player.setVolume(0.5);
+        System.out.println("starttime: " + next.getStart());
+        System.out.println("endTime : " + (next.getDuration()+ next.getStart()));
+        player.setStartTime(Duration.seconds(next.getStart()));
+        player.setStopTime(Duration.seconds(next.getDuration()+ next.getStart()));
+        player.play();
+
+    }//GEN-LAST:event_nextButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -169,12 +239,15 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox AddVideosCheckbox;
-    private javax.swing.JPanel PlayerPanel;
     private javax.swing.JCheckBox addImagesCheckbox;
     private javax.swing.JButton importButton;
-    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton nextButton;
     private javax.swing.JTextField seedField;
+    private javax.swing.JPanel videoPanel;
     // End of variables declaration//GEN-END:variables
     private static PlayUtils CONTROLLER =  new PlayUtils();
+    private JFXPanel jfxPanel = new JFXPanel();
+    private MediaPlayer player;
+
 }
